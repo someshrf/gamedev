@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html>
+ <head>
+   
+   <title>maze2 </title>
+
+ </head>
+
+<style>
+  #myCanvas{
+    display:inline;
+    border:none;
+    background-color: black;
+    }
+  
+  #timer{
+    display:inline;
+    position:absolute;
+    margin-top:250px;
+    margin-left:80px;
+    font-size:32px;
+  }
+
+  #score{
+    display:inline;
+    position:absolute;
+    margin-top:170px;
+    margin-left:80px;
+    font-size:32px;
+  
+  }
+
+  #level{
+    display:inline;
+    position:absolute;
+    margin-top:320px;
+    margin-left:80px;
+    font-size:32px;
+
+  }
+
+  #mybutton{
+    display:inline;
+    position:absolute;
+    margin-top:450px;
+    margin-left:80px;
+    font-size:32px;
+  }
+
+
+</style>
+
+ <body>
+
+  <canvas id="myCanvas" height="580" width="1000">
+   <!-- <canvas id="Canvas" height="600" width="1250">
+    </canvas> -->
+  </canvas>
+
+  <div id="timer">2:00</div>
+  <div id="level">Level:1</div>
+  <div id="score">Score:0</div>
+  <button id="mybutton" onclick="reload()">Restart</button>
+
+<script>
+ 
+ var canvas=document.getElementById("myCanvas");
+ var ctx=canvas.getContext("2d");
+ canvas.tabIndex=1;
+ //var canvas1=document.getElementById("Canvas");
+ //var ctx1=canvas.getContext("2d");
+ 
+ var back=new Image();
+ back.src="images/back1.png";
+ //ctx.drawImage(back,0,0,canvas.width,canvas.height);
+ var char=new Image();
+ char.src="images/hero.jpg";
+ 
+ var coin=new Image();
+ coin.src="images/coin.jpg";
+ 
+ var end =new Image();
+ end.src="images/door.jpg";
+ 
+// http://donjon.bin.sh/fantasy/dungeon/cache/594b8f0e-ca3e470b.png
+
+var thingsOnMap=[
+[0,0],
+[1106,400],
+[796,220],
+[690,900],
+[640,660]
+]; 
+
+var playerX=64;
+var playerY=472;
+
+var offsetX=0;
+var offsetY=0;
+
+var score=0;
+var c1=1;
+var c2=1;
+var c3=1;
+
+var flag1=0;
+var flag2=0;
+var flag3=0;
+
+var level=1;
+
+function draw(){
+  ctx.save();
+  ctx.translate(offsetX,offsetY);
+  ctx.clearRect(-offsetX,-offsetY,1200,1000);
+  
+  //ctx.drawImage(char,playerX-offsetX,playerY-offsetY,25,25);
+  
+  var l=thingsOnMap.length;
+  for(var i=0;i<l;i++)
+  {var x=thingsOnMap[i][0];
+   var y=thingsOnMap[i][1];
+   
+   if(i==1)
+    {ctx.drawImage(end,x,y,26,26);}
+   if(i==0)
+    {ctx.drawImage(back,x,y,1200,1000);}
+   
+ if(i==2)
+    {if(c1==1)
+      {ctx.drawImage(coin,x,y,26,26);}
+    }
+
+ if(i==3)
+    {if(c2==1)
+      {ctx.drawImage(coin,x,y,26,26);}
+    }
+
+ if(i==4)
+    {if(c3==1)
+      {ctx.drawImage(coin,x,y,26,26);}
+    }
+}
+
+  ctx.drawImage(char,playerX-offsetX,playerY-offsetY,25,25);
+   
+ 
+  for(var i=2;i<l;i++)
+  { var x=thingsOnMap[i][0];
+    var y=thingsOnMap[i][1];
+  
+   if(playerX-offsetX+15>=x && playerX-offsetX+15<=(x+26) && playerY-offsetY+10>=y && playerY-offsetY+10<=(y+26))
+    {if(i==2)
+      {c1=0;
+       if(flag1==0)
+        {score+=10;
+         flag1++;
+        }
+       break;
+      }
+
+     else if(i==3)
+      {c2=0;
+       if(flag2==0)
+       {score+=10;
+        flag2++;
+       }
+       break;
+      }
+    
+     else if(i==4)
+      {c3=0;
+       if(flag3==0)
+       {score+=10;
+        flag3++;
+       }
+       break;
+      }
+
+    }
+
+  }
+
+ 
+ if( (playerX-offsetX+15)>=thingsOnMap[1][0] && (playerX-offsetX+15)<=(thingsOnMap[1][0]+26) && (playerY-offsetY+10)>=thingsOnMap[1][1] && (playerY-offsetY+10)<=(thingsOnMap[1][1]+26) )
+  { audio=new Audio("images/doorclose.mp3");
+    audio.play();
+    level++;
+    if(level==2)
+    {reset1();
+    }
+   else if(level==3)
+    {reset2();
+    }
+    else
+    { ctx.clearRect(0,0,canvas.width,canvas.height);
+      ctx.fillStyle="white";
+      ctx.font = "30px Arial";
+      ctx.fillText("You Win",450,100);
+      mins=1;
+      seconds=0;
+    }
+  }
+
+   ctx.restore();
+}
+
+
+  function collisionUp(){
+		
+		var pixel = ctx.getImageData(playerX,playerY,1,-1).data;
+		
+		if(pixel[0]<=4 && pixel[1]<=4 && pixel[2]<=4)
+			return true;
+		return false;
+	}
+	function collisionDown(){
+		
+		var pixel = ctx.getImageData(playerX,playerY+26,1,1).data;
+		
+		if(pixel[0]<=4 && pixel[1]<=4 && pixel[2]<=4)
+			return true;
+		return false;
+	}
+	function collisionLeft(){
+		
+		var pixel = ctx.getImageData(playerX,playerY,-1,1).data;
+		
+    if(pixel[0]<=4 && pixel[1]<=4 && pixel[2]<=4)
+		  return true;
+      
+ 		return false;
+	}
+	function collisionRight(){
+		
+		var pixel = ctx.getImageData(playerX+26,playerY,1,1).data;
+		
+		if(pixel[0]<=4 && pixel[1]<=4 && pixel[2]<=4)
+			return true;
+		return false;
+	}
+  
+  function key(){
+    canvas.addEventListener('keydown',function(e) {
+      if(e.keyCode===37)
+        {
+        	if(!collisionLeft())
+        	offsetX+=3;
+        }
+      else if(e.keyCode===39)
+        {
+        	if(!collisionRight())
+        	offsetX-=3;
+        }
+      else if(e.keyCode===38)
+        {
+        	if(!collisionUp())
+        	offsetY+=3;
+        }
+      else if(e.keyCode===40)
+        {
+        	if(!collisionDown())
+        	offsetY-=3;
+        }
+  
+      draw(); 
+    },false);
+}
+key();
+
+var timeout;
+var seconds;
+var mins;
+function countdown(minutes) {
+     seconds = 60;
+     mins = minutes;
+    function tick() {
+        var counter = document.getElementById("timer");
+        var current_minutes = mins-1
+        seconds--;
+        
+        var scores=document.getElementById("score");
+        scores.innerHTML="Score:"+String(score);
+
+        counter.innerHTML =
+        current_minutes.toString() + ":" + (seconds < 10 ? "0" : "") + String(seconds);
+        if( seconds > 0 ) {
+            timeout=setTimeout(tick, 1000);
+        } else {
+
+            if(mins > 1){
+               
+               setTimeout(function () { countdown(mins - 1); }, 1000);
+
+            }
+
+            else if(seconds==0)
+            {
+              counter.innerHTML ="Time's Up";
+              if(level==1)
+                {setTimeout(function(){document.location.reload();}
+                , 2000);}
+              
+              else if(level==2)
+                {setTimeout(reset1(),2000);
+                 setTimeout(key(),500);
+                 setTimeout(draw(),4000);
+                 countdown(2);
+                }
+
+             else if(level==3)
+                {setTimeout(reset2(), 2000);
+                 setTimeout(key(),500);
+                 setTimeout(draw(),4000);
+                 countdown(2);
+                 }
+             
+             else
+                {function go () {}
+                 setTimeout(go, 1000); // callback
+                }
+
+          }
+         
+        }
+    }
+    tick();
+}
+
+// countdown(2);
+
+function reload(){
+  document.location.reload();
+}
+
+function reset1(){
+
+back.src="images/back2.png";
+
+thingsOnMap=[
+ [0,0],
+ [796,50],
+ [996,250],
+ [750,915],
+ [480,360]
+]; 
+
+ playerX=167;
+ playerY=262;
+ offsetX=0;
+ offsetY=0;
+
+seconds=60;
+mins=2;
+
+var lev=document.getElementById("level");
+lev.innerHTML="Level: "+String(level);
+}
+
+
+function reset2(){
+  back.src="images/back3.png";
+  
+thingsOnMap=[
+[0,0],
+[169,140],
+[794,250],
+[750,915],
+[380,430]
+]; 
+
+playerX=167;
+playerY=362;
+offsetX=0;
+offsetY=0;
+
+seconds=60;
+mins=2;
+
+var lev=document.getElementById("level");
+lev.innerHTML="Level: "+String(level);
+} 
+
+myAudio = new Audio('images/backsound.mp3'); 
+ myAudio.addEventListener('ended', function() {
+   this.currentTime = 0;
+   this.play();
+   }, false);
+   myAudio.play();
+
+    countdown(2);
+    draw();
+   
+    </script>
+  </body>
+</html>  
