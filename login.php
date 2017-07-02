@@ -10,7 +10,7 @@
         <h2>Login</h2>
     </div>
 
-    <form method="post" action="login.php">
+    <form method="post" action="login.php" class="foorm">
          <!-- error messages -->
        <?php include('errors.php'); ?>
        
