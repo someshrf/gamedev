@@ -1,0 +1,68 @@
+ var nitropress=new Date();
+ var nitroend=new Date();
+ var flagtime=false;
+
+ function gamePlay(){
+ console.log(car.status);
+    if(!car.status){
+ 
+         ctx.clearRect(0,0,canvas.width,canvas.height);
+  background();
+      drawCar();
+    //	console.log(obstacle.status      +"      "+ obstacle.x_coordinate+"    "+obstacle.y_coordinate+"    "+obstacle.oldObject);
+      if(nitroPress)
+       	{ dy=4;
+          drawNitro();
+          if(!flagtime)
+          	 {nitropress=Date.now();
+          	  flagtime++;
+          	 }  	
+       	}
+       	 nitroend=Date.now();
+         
+         if(Math.floor(((nitroend-nitropress)/1000)%60)>2)
+         	{   nitroPress=false;
+         		dy=2;
+             	ctx.clearRect(car.x+15,car.y+145,70,45);
+             	flagtime=0;
+             }
+                       
+    	if(obstacle.y>canvas.height){
+         obstacle.status = false;
+         obstacle.oldObject=false;
+         obstacle.y = 0;
+         //obstacleGeneration(obstacle.x_coordinate,obstacle.y_coordinate,obstacle.width,obstacle.height,obstacle.status);
+
+    	}
+      
+      
+      obstacle.y = obstacleMovement(obstacle.y,obstacle.speed);
+      
+      detect(obstacle.x,obstacle.y,obstacle.width,obstacle.height);
+
+
+    	drawObstacle(obstacle.x,obstacle.y,obstacle.width,obstacle.height,obstacle.status);
+      
+    	
+       }
+    else{
+     ctx.drawImage(gameover,130,80,250,180);
+
+      ctx.beginPath();
+      ctx.rect(130,260,250,100);
+      ctx.fill();
+ 
+    
+      ctx.font="bold 25px serif";
+      ctx.fillStyle="green";
+      ctx.fillText("Press enter to start",153,280);
+      ctx.fillStyle="black";
+      ctx.closePath();
+    
+    }
+    requestAnimationFrame(gamePlay);
+    ctx.fillStyle="black";
+    if(enterPress==true)
+     document.location.reload();  
+ }
+
