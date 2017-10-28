@@ -181,7 +181,7 @@ if(lives==0)
   }
 }
 
-/*function changelane(direction)
+function changelane(direction)
 {
   if(direction=="right")
   {if((car.x>=0)&&(car.x+150<=canvas.width-imgTag.width))
@@ -189,7 +189,7 @@ if(lives==0)
   else if(direction="left")
   {if((car.x-150>=0)&&(car.x<=canvas.width-imgTag.width))
         car.x-=170;}
-}*/
+}
 function update(event)
   {
     if (event.keyCode == 37)
@@ -283,7 +283,7 @@ function update(event)
     
       ctx.font="bold 25px serif";
       ctx.fillStyle="green";
-      ctx.fillText("Press enter to start",153,280);
+      ctx.fillText("enter to start",153,280);
       ctx.fillStyle="black";
       ctx.closePath();
     
